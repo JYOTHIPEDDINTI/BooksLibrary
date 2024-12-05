@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books Project</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f8ff;
+        }
+
+        h1 {
+            color: #007bff;
+            margin-bottom: 30px;
+        }
+
+        .form-control {
+            margin-bottom: 15px;
+        }
+
+        .btn-primary, .btn-success, .btn-danger {
+            margin-right: 10px;
+        }
+
+        table {
+            margin-top: 20px;
+        }
+
+        table th {
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+        }
+
+        table td {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <div class="text-center">
+            <h1>Book CRUD</h1>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-sm p-4">
+                    <div class="form-group">
+                        <label for="bookid">Book No:</label>
+                        <input type="text" class="form-control" id="bookid" placeholder="Enter Book Number">
+                    </div>
+                    <div class="form-group">
+                        <label for="bookname">Book Name:</label>
+                        <input type="text" class="form-control" id="bookname" placeholder="Enter Book Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="bookauthor">Book Author:</label>
+                        <input type="text" class="form-control" id="bookauthor" placeholder="Enter Book Author">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <input type="text" class="form-control" id="description" placeholder="Enter Description">
+                    </div>
+                    <div class="text-center">
+                        <button class="btn btn-primary" onclick="getBooks()">Get Books</button>
+                        <button class="btn btn-success" onclick="AddBook()">Add Book</button>
+                        <button class="btn btn-warning" onclick="save()">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-md-12">
+                <table id="list" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Book ID</th>
+                            <th>Book Name</th>
+                            <th>Book Author</th>
+                            <th>Description</th>
+                            <th>Delete</th>
+                            <th>Update</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamic Content will be added here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+		<script>
+			function AddBook() {
+				// Get data from your HTML form or input fields
+
+				var empData = {
+					bookid: document.getElementById("bookid").value,
+					bookname: document.getElementById("bookname").value,
+					bookauthor: document.getElementById("bookauthor").value,
+					description: document.getElementById("description").value
+
+				};
+				console.log(empData);
+
+				// Create an XMLHttpRequest object
+				var xhr = new XMLHttpRequest();
+
+				// Configure the request
+				xhr.open("POST", "/addbook", true); // Replace with the actual URL
+
+				// Set the request header to specify JSON content
+				xhr.setRequestHeader("Content-Type", "application/json");
+
+				// Convert the JavaScript object to a JSON string
+				var jsonData = JSON.stringify(empData);
+				console.log(jsonData);
+
+				// Set up a callback function to handle the response
+				xhr.onreadystatechange = function () {
+					if (xhr.readyState === 4) { // Check if the request is complete
+						if (xhr.status === 201) { // Check if the response status is "Created"
+							alert("Book is added successfully");
+							// You can perform additional actions here if needed
+						} else {
+							alert("Failed to add book"); // Handle the error case
+						}
+					}
+				};
+
+				// Send the JSON data as the request body
+				xhr.send(jsonData);
+				getBooks();
+			}
+			function getBooks() {
+				var a = new XMLHttpRequest();
+				a.open("GET", "/getbooks", true);
+				a.send();
+				a.onreadystatechange = function () {
+					if (a.readyState === 4) { // Check if the request is complete
+						if (a.status === 200) {
+							var data = JSON.parse(a.responseText);
+							console.log(data);
+
+
+							// Clear the existing table body
+
+							var table = document.getElementById("list");
+							table.innerHTML = ``;
+							var tablebody = document.createElement("tbody");
+							var tablehead = document.createElement("thead");
+							var headers = document.createElement("th");
+							var row = document.createElement("tr");
+							var body = document.createElement('tr');
+							var td1 = document.createElement('th');
+							var td2 = document.createElement('th');
+							var td3 = document.createElement('th');
+							var td4 = document.createElement('th');
+							var td6 = document.createElement('th');
+							var td7 = document.createElement('th');
+							td1.textContent = "Book ID";
+							td2.textContent = "Book Name";
+							td3.textContent = "Book Author";
+							td4.textContent = "Description";
+							td6.textContent = "Delete";
+							td7.textContent = "Update";
+							row.appendChild(td1);
+							row.appendChild(td2);
+							row.appendChild(td3);
+							row.appendChild(td4);
+							row.appendChild(td6);
+							row.appendChild(td7);
+							tablehead.appendChild(row);
+							table.append(tablehead);
+
+
+
+
+
+							data.forEach(function (x) {
+								console.log(x);
+								var body = document.createElement('tr');
+								var td1 = document.createElement('td');
+								var td2 = document.createElement('td');
+								var td3 = document.createElement('td');
+								var td4 = document.createElement('td');
+								var td6 = document.createElement('td');
+								var td7 = document.createElement('button');
+								var td8 = document.createElement('button');
+								var td9 = document.createElement('td');
+								td1.textContent = x.bookid;
+								td2.textContent = x.bookname;
+								td3.textContent = x.bookauthor;
+								td4.textContent = x.description;
+								td7.textContent = "Delete";
+								td7.onclick = function () {
+
+									deleteBook(x.bookid);
+								};
+								td8.textContent = "Update";
+								td8.onclick = function () {
+
+									updateBook(x);
+								};
+
+								// Append the button to the table cell
+								td6.appendChild(td7);
+								td9.appendChild(td8);
+								body.appendChild(td1);
+
+								body.appendChild(td2);
+								body.appendChild(td3);
+								body.appendChild(td4);
+								body.appendChild(td6);
+								body.appendChild(td9);
+								tablebody.appendChild(body);
+
+							});
+							table.append(tablebody);
+						}
+					}
+				}
+			}
+			function deleteBook(id) {
+				var a = new XMLHttpRequest();
+				a.open("DELETE", "/deletebook/" + id, true);
+				a.send();
+				a.onreadystatechange = function () {
+					if (a.readyState === 4) { // Check if the request is complete
+						if (a.status === 200) {
+							alert("deleted");
+						}
+					}
+				}
+				getBooks();
+			}
+
+			function updateBook(x) {
+
+				document.getElementById("bookid").value = x.bookid;
+				document.getElementById("bookname").value = x.bookname;
+				document.getElementById("bookauthor").value = x.bookauthor;
+				document.getElementById("description").value = x.description;
+
+			}
+
+
+
+
+
+
+
+			function save() {
+				// Get data from your HTML form or input fields
+				var id = document.getElementById("bookid").value;
+
+				var empData = {
+					bookid: document.getElementById("bookid").value,
+					bookname: document.getElementById("bookname").value,
+					bookauthor: document.getElementById("bookauthor").value,
+					description: document.getElementById("description").value
+
+				};
+				console.log(empData);
+
+				// Create an XMLHttpRequest object
+				var xhr = new XMLHttpRequest();
+
+				// Configure the request
+				xhr.open("PUT", "/updatebook/" + id, true); // Replace with the actual URL
+
+				// Set the request header to specify JSON content
+				xhr.setRequestHeader("Content-Type", "application/json");
+
+				// Convert the JavaScript object to a JSON string
+				var jsonData = JSON.stringify(empData);
+				console.log(jsonData);
+
+				// Set up a callback function to handle the response
+				xhr.onreadystatechange = function () {
+					if (xhr.readyState === 4) { // Check if the request is complete
+						if (xhr.status === 200) { // Check if the response status is "Created"
+							alert("Book is UPdated successfully");
+							// You can perform additional actions here if needed
+						} else {
+							alert("Failed to UPdate Book"); // Handle the error case
+						}
+					}
+				};
+
+				// Send the JSON data as the request body
+				xhr.send(jsonData);
+				getBooks();
+			}
+
+		</script>
+	</center>
+</body>
+
+</html>
